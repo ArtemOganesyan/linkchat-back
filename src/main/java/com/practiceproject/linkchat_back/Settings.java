@@ -23,4 +23,4 @@ public class Settings {
  public void setValue(String value) {
   this.value = value;
  }
- }
+}
