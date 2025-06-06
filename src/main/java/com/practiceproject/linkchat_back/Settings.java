@@ -1,26 +1,53 @@
 package com.practiceproject.linkchat_back;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@ConfigurationProperties(prefix = "chat")
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "settings")
 public class Settings {
- private String setting;
- private String value;
 
- public String getSetting() {
-  return setting;
+ @Id
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
+ private Long id;
+
+ @Column(name = "settingname", nullable = false, unique = true)
+ private String settingName;
+
+ @Column(name = "settingvalue", nullable = false)
+ private String settingValue;
+
+ // Constructors
+ public Settings() {
  }
 
- public void setSetting(String setting) {
-  this.setting = setting;
+ public Settings(String settingName, String settingValue) {
+  this.settingName = settingName;
+  this.settingValue = settingValue;
  }
 
- public String getValue() {
-  return value;
+ // Getters and Setters
+ public Long getId() {
+  return id;
  }
 
- public void setValue(String value) {
-  this.value = value;
+ public void setId(Long id) {
+  this.id = id;
  }
+
+ public String getSettingName() {
+  return settingName;
  }
+
+ public void setSettingName(String settingName) {
+  this.settingName = settingName;
+ }
+
+ public String getSettingValue() {
+  return settingValue;
+ }
+
+ public void setSettingValue(String settingValue) {
+  this.settingValue = settingValue;
+ }
+
+}
