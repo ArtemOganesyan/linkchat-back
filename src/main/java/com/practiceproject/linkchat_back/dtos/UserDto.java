@@ -1,27 +1,19 @@
-package com.practiceproject.linkchat_back.model;
+package com.practiceproject.linkchat_back.dtos;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
-@Entity
-@Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
+public class UserDto {
+    @NotBlank(message = "Username is required")
     private String username;
+    @NotBlank(message = "Password is required")
     private String password;
 
-    public User() {
+    public UserDto() {
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public UserDto(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public String getUsername() {

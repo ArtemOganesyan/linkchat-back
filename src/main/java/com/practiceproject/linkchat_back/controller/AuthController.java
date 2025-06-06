@@ -1,33 +1,45 @@
 package com.practiceproject.linkchat_back.controller;
 
-import com.practiceproject.linkchat_back.adminLoginPageController.AdminLoginPageController;
+
+import com.practiceproject.linkchat_back.dtos.UserDto;
+import com.practiceproject.linkchat_back.model.Message;
+import com.practiceproject.linkchat_back.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.Objects;
 
 @RestController
 public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/api/auth")
-    public Map<String, Object> auth(@RequestBody Map<String, String> payload) {
-        logger.debug("Received authentication request with payload: {}", payload);
-        String username = payload.get("username");
-        String password = payload.get("password");
+    public ResponseEntity<Message> auth(@RequestBody final UserDto user) {
+        logger.debug("Accessing auth endpoint");
 
-        Map<String, Object> response = new HashMap<>();
+        if (user == null ||
+                user.getUsername() == null ||
+                user.getPassword() == null) {
 
-        if ("admin".equals(username) && "password123".equals(password)) {
-            response.put("message", "Login successful!");
-        } else {
-            response.put("message", "Invalid username or password.");
+            logger.error("Authentication failed: missing credentials");
+            return ResponseEntity.badRequest().body(new Message("Authentication failed: missing credentials"));
         }
 
-        return response;
+        boolean isAuthenticated =
+                Objects.equals("testuser", user.getUsername()) &&
+                        Objects.equals("password", user.getPassword());
+
+        if (!isAuthenticated) {
+            logger.error("Authentication failed: invalid username or password");
+            return ResponseEntity.status(401).body(new Message("Authentication failed: invalid username or password"));
+        }
+
+        logger.info("Authentication successful for user: {}", user.getUsername());
+        return ResponseEntity.ok(new Message("Authentication successful"));
     }
 }
