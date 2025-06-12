@@ -19,9 +19,19 @@
         </encoder>
     </appender>
 
+    <appender name="DATABASE" class="ch.qos.logback.classic.db.DBAppender">
+        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+            <driverClass>org.postgresql.Driver</driverClass>
+            <url>jdbc:postgresql://localhost:5432/student_dev</url>
+            <user>postgres</user>
+            <password>test123</password>
+        </connectionSource>
+    </appender>
+
     <root level="DEBUG">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
+        <appender-ref ref="DATABASE" />
     </root>
 
 </configuration>
