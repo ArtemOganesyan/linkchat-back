@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class AdminLoginPageController {
     private static final Logger logger = LoggerFactory.getLogger(AdminLoginPageController.class);
 
-    @GetMapping("/api/admin-login")
+    @GetMapping("/ui/admin-login")
     public String login() {
         logger.debug("Accessing admin login page");
         return "admin-login";
