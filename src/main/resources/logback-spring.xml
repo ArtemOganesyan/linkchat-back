@@ -19,9 +19,23 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+            <driverClass>org.postgresql.Driver</driverClass>
+            <url>jdbc:postgresql://fs-dev.portnov.com:5432/link_chat</url>
+            <user>postgres</user>
+            <password>Portnov.2025!</password>
+        </connectionSource>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+
+    </appender>
+
+    <root level="INFO">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
+        <appender-ref ref="DB" />
     </root>
 
 </configuration>
