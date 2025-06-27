@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <title>Admin Settings</title>
+        <link rel="stylesheet" th:href="@{/styles/gegam-settings.css}"/>
+    </head>
+    <body>
+        <div class="center">
+            <h1>New Custom Settings</h1>
+            <div class="message-container">
+                <div th:if="${message}" style="color: green;"><span th:text="${message}"></span></div>
+                <div th:if="${error}" style="color: red;"><span th:text="${error}"></span></div>
+            </div>
+            <form th:action="${editing} ? @{/ui/update-setting} : @{/ui/gegam-settings}" method="post">
+                <input type="hidden" name="id" th:if="${editing}" th:value="${setting.id}" />
+                <div class="txt_field">
+                    <input type="text" name="setting_name" id="setting_name"
+                           th:value="${setting.settingName}" required th:readonly="${editing}">
+                    <span></span>
+                    <label>Setting name</label>
+                </div>
+                <div class="select_field">
+                    <select id="setting_type" name="setting_type" required>
+                        <option value="Boolean" th:selected="${setting.settingType == 'Boolean'}">Boolean</option>
+                        <option value="String" th:selected="${setting.settingType == 'String'}">String</option>
+                    </select>
+                    <span></span>
+                    <label for="setting_type">Select type</label>
+                </div>
+                <div class="txt_field">
+                    <input type="text" id="setting_value" name="setting_value" th:value="${setting.settingValue}" required>
+                    <span></span>
+                    <label>Value</label>
+                </div>
+                <div class="button-row">
+                    <a th:href="@{/ui/view-settings}" class="button-link">View Settings</a>
+                    <input type="submit" th:value="${editing} ? 'Update' : 'Save'">
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

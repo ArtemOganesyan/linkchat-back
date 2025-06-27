@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body{
+  margin: 0;
+  padding: 0;
+  background: #FFFFFF;
+  height: 100vh;
+  overflow: hidden;
+}
+.center{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid #4631A0;
+  box-shadow: 10px 10px 15px rgba(0,0,0,0.05);
+}
+.center h1{
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #4631A0;
+}
+.center form{
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+.center .message-container{
+  text-align: center;
+  padding: 20px 0 0 0;
+}
+form .txt_field{
+  position: relative;
+  border-bottom: 2px solid #adadad;
+  margin: 30px 0;
+}
+form .select_field{
+  position: relative;
+  display: flex;
+  border-bottom: 2px solid #adadad;
+  margin: 30px 0;
+  align-items: center;
+}
+.txt_field input{
+  width: 100%;
+  padding: 0 5px;
+  height: 40px;
+  font-size: 16px;
+  border: none;
+  background: none;
+  outline: none;
+}
+.select_field select {
+  width: 100%;
+  padding: 0 5px;
+  height: 40px;
+  font-size: 16px;
+  border: none;
+  background:
+    url("data:image/svg+xml;utf8,<svg fill='4631A0' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")
+    no-repeat right 10px center/20px 20px;
+  outline: none;
+  font-family: "Poppins", sans-serif;
+  color: #000;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.txt_field label{
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  color: #C5C5C5;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+  transition: .5s;
+}
+.select_field label {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  bottom: 2px;
+  color: #C5C5C5;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+}
+.txt_field span::before{
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: #aa9de1;
+  transition: .5s;
+}
+.select_field select:focus ~ label,
+.select_field select:valid ~ label {
+  top: -5px;
+  color: #C5C5C5;
+}
+.txt_field input:focus ~ label,
+.txt_field input:valid ~ label{
+  top: -5px;
+  color: #aa9de1;
+}
+.txt_field input:focus ~ span::before,
+.txt_field input:valid ~ span::before{
+  width: 100%;
+}
+.toggle-password{
+  position: absolute;
+  top: 55%;
+  right: 10%;
+  color: #a6a6a6;
+}
+.toggle-password:hover{
+  color: #4631A0;
+  cursor: pointer;
+}
+input[type="submit"]:hover{
+  border-color: #4631A0;
+  transition: .5s;
+}
+input[type="submit"]:active{
+  background: #4631A0;
+  color: #FFFFFF;
+}
+input[type="submit"]{
+  width: 100%;
+  height: 50px;
+  border: 2px solid #6DBC00;
+  background: #FFFFFF;
+  border-radius: 5px;
+  font-size: 18px;
+  color: #000000;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  margin: -5px 0 20px 0px;
+}
+.button-link:hover{
+  border-color: #4631A0;
+  transition: .5s;
+}
+.button-link:active{
+  background: #4631A0;
+  color: #FFFFFF;
+}
+.button-link{
+  width: 100%;
+  height: 50px;
+  border: 2px solid #6DBC00;
+  background: #FFFFFF;
+  border-radius: 5px;
+  font-size: 18px;
+  color: #000000;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  margin: -5px 0 20px 0px;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  padding: 10px 0;
+}
+.button-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.button-row input[type="submit"],
+.button-row .button-link {
+  width: 50%;
+  margin: 0;
+}
+.pass{
+  margin: -5px 0 20px 5px;
+  color: #a6a6a6;
+  cursor: pointer;
+}
+.pass:hover{
+  text-decoration: underline;
+}
+.pass:active{
+  color: #4631A0;
+}
+
+@media (max-width: 600px) {
+  .center, .modal-content {
+    width: 95%;
+    min-width: unset;
+    margin: 10% auto;
+    padding: 10px;
+  }
+  .center form, .modal form {
+    padding: 0 10px;
+  }
+  .modal-content {
+    width: 95%;
+  }
+}
