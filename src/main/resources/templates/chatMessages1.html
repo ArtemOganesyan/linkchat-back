@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="layout.html">
+
+<head>
+    <style>
+        .chat-messages-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .chat-messages-header {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .chat-messages-header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .chat-form-card {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            border-left: 5px solid #667eea;
+        }
+
+        .chat-form-card h2 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            font-size: 15px;
+            text-align: center;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #5a6fd5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-update {
+            background-color: #38b2ac;
+            color: white;
+        }
+
+        .btn-update:hover {
+            background-color: #319795;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(56, 178, 172, 0.2);
+        }
+
+        .btn-danger {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(229, 62, 62, 0.2);
+        }
+
+        .messages-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        .messages-table tr {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .messages-table tr:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .messages-table td {
+            padding: 20px;
+        }
+
+        .messages-table td:first-child {
+            border-radius: 10px 0 0 10px;
+            border-left: 4px solid #667eea;
+            font-weight: bold;
+            color: #667eea;
+            width: 60px;
+            text-align: center;
+        }
+
+        .messages-table td:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .edit-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .edit-form .form-group {
+            margin-bottom: 0;
+        }
+
+        .edit-field {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .message-timestamp {
+            color: #718096;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .message-id {
+            background-color: #edf2f7;
+            color: #4a5568;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .empty-messages {
+            background-color: #f7fafc;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 12px;
+            color: #718096;
+            font-size: 18px;
+        }
+
+        .empty-messages i {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #cbd5e0;
+        }
+
+        .section-title {
+            color: #4a5568;
+            margin: 30px 0 20px 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .form-group {
+                grid-template-columns: 1fr;
+            }
+
+            .edit-form {
+                flex-direction: column;
+            }
+
+            .message-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<section layout:fragment="content">
+    <div class="chat-messages-container">
+        <div class="chat-messages-header">
+            <h1>Chat Messages Management</h1>
+        </div>
+
+        <div class="chat-form-card">
+            <h2>Add New Message</h2>
+            <form th:action="@{/ui/chatMessages1/add}" th:object="${chatMessageForm}" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" th:field="*{sender}" placeholder="Sender" required/>
+                    <input type="text" class="form-control" th:field="*{recipient}" placeholder="Recipient" required/>
+                    <input type="text" class="form-control" th:field="*{timestamp}" placeholder="Timestamp (YYYY-MM-DD HH:MM:SS)" required/>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Message</button>
+            </form>
+        </div>
+
+        <h2 class="section-title">Existing Messages</h2>
+
+        <div th:if="${chatMessages.isEmpty()}" class="empty-messages">
+            <i class="fas fa-comment-slash"></i>
+            <p>No chat messages have been added yet.</p>
+        </div>
+
+        <table class="messages-table" th:unless="${chatMessages.isEmpty()}">
+            <tbody>
+                <tr th:each="message: ${chatMessages}">
+                    <td th:text="${message.message_id}">1</td>
+                    <td>
+                        <form th:action="@{/ui/chatMessages1/update}" method="post" class="edit-form">
+                            <input type="hidden" name="message_id" th:value="${message.message_id}"/>
+
+                            <div class="edit-field">
+                                <label>Sender</label>
+                                <input type="text" class="form-control" name="sender" th:value="${message.sender}" required/>
+                            </div>
+
+                            <div class="edit-field">
+                                <label>Recipient</label>
+                                <input type="text" class="form-control" name="recipient" th:value="${message.recipient}" required/>
+                            </div>
+
+                            <div class="edit-field">
+                                <label>Timestamp</label>
+                                <input type="text" class="form-control" name="timestamp" th:value="${message.timestamp}" required/>
+                            </div>
+
+                            <div class="message-actions">
+                                <button type="submit" class="btn btn-update">Update</button>
+                                <a th:href="@{/ui/chatMessages1/delete/{id}(id=${message.message_id})}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</html>
