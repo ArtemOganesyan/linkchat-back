@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitalii Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      .card { margin-bottom: 1.5rem; }
+      .table-responsive { max-height: 450px; overflow-y: auto; }
+    </style>
+  </head>
+  <body>
+    <!-- Header with hamburger menu -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/ui/dashboard}">ChatLink</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/ui/dashboard}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/ui/dashboard}">Dashboard</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Main content for Vitalii Settings -->
+    <main class="container my-5">
+      <h2 class="text-center mb-4">Manage Vitalii Settings</h2>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+              Add New Setting
+            </div>
+            <div class="card-body">
+              <form th:action="@{/ui/vitalii-settings/add}" th:object="${settingForm}" method="post">
+                <div class="mb-3">
+                  <label class="form-label">Setting Name</label>
+                  <input type="text" th:field="*{settingName}" class="form-control" placeholder="Enter name" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Setting Value</label>
+                  <input type="text" th:field="*{settingValue}" class="form-control" placeholder="Enter value" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Setting Type</label>
+                  <select th:field="*{settingType}" class="form-select">
+                    <option value="BOOLEAN">Boolean</option>
+                    <option value="STRING">String</option>
+                    <option value="NUMBER">Number</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Add Setting</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card shadow">
+            <div class="card-header bg-secondary text-white">
+              Current Settings
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                      <th>Type</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="setting : ${settings}">
+                      <form th:action="@{/ui/vitalii-settings/update}" method="post">
+                        <input type="hidden" name="id" th:value="${setting.id}" />
+                        <td>
+                          <input type="text" name="settingName" th:value="${setting.settingName}" class="form-control" required />
+                        </td>
+                        <td>
+                          <input type="text" name="settingValue" th:value="${setting.settingValue}" class="form-control" required />
+                        </td>
+                        <td>
+                          <select name="settingType" class="form-select">
+                            <option value="BOOLEAN" th:selected="${setting.settingType=='BOOLEAN'}">Boolean</option>
+                            <option value="STRING" th:selected="${setting.settingType=='STRING'}">String</option>
+                            <option value="NUMBER" th:selected="${setting.settingType=='NUMBER'}">Number</option>
+                          </select>
+                        </td>
+                        <td class="d-flex gap-2">
+                          <button type="submit" class="btn btn-outline-primary btn-sm">Save</button>
+                          <a th:href="@{/ui/vitalii-settings/delete/{id}(id=${setting.id})}" class="btn btn-outline-danger btn-sm">Delete</a>
+                        </td>
+                      </form>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -28,11 +28,13 @@
 //
 //    @NotBlank
 //    @Size(max = 64)
+//    @Column(name = "settingName", nullable = false, length = 64)
 //    @Column(name = "setting_name", nullable = false, length = 64)
 //    private String settingName;
 //
 //    @NotBlank
 //    @Size(max = 512)
+//    @Column(name = "settingValue", nullable = false, length = 512)
 //    @Column(name = "setting_value", nullable = false, length = 512)
 //    private String settingValue;
 //
