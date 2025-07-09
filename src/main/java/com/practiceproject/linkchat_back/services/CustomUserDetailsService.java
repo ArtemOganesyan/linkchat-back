@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -23,5 +24,16 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(), user.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority("USER")));
+    }
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
     }
 }
