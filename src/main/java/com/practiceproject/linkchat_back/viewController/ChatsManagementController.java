@@ -2,9 +2,11 @@ package com.practiceproject.linkchat_back.viewController;
 
 import com.practiceproject.linkchat_back.dtos.ChatSettingsDto;
 import com.practiceproject.linkchat_back.dtos.SimpleEmailRequest;
+import com.practiceproject.linkchat_back.dtos.ShareEmail;
 import com.practiceproject.linkchat_back.model.Chat;
-import com.practiceproject.linkchat_back.model.InviteEmailEntry;
+import com.practiceproject.linkchat_back.model.ChatUser;
 import com.practiceproject.linkchat_back.repository.ChatRepository;
+import com.practiceproject.linkchat_back.repository.ChatUserRepository;
 import com.practiceproject.linkchat_back.services.ChatService;
 import com.practiceproject.linkchat_back.services.EmailService;
 import com.practiceproject.linkchat_back.viewModels.ChatForm;
@@ -12,36 +14,15 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
-/**
- * Controller for chats management operations.
- * Handles displaying, editing, and deleting chats via UI endpoints.
- * Uses Spring Boot, Java, and Thymeleaf for view rendering.
- *
- * Endpoints:
- * - /ui/chats-management: List all users
- * - /ui/chat-settings/save: Edit chat form and update
- * - /ui/chat-settings/delete: Delete chat
- *
- * Dependencies:
- * - ChatRepository for data access
- * - ChatSettingsDto for form binding
- */
 
 @Controller
 @RequestMapping("/ui")
@@ -51,20 +32,17 @@ public class ChatsManagementController {
     private final ChatRepository chatRepository;
     private final ChatService chatService;
     private final EmailService emailService;
+    private final ChatUserRepository chatUserRepository;
 
-    public ChatsManagementController(ChatRepository chatRepository, ChatService chatService, EmailService emailService) {
+    public ChatsManagementController(ChatRepository chatRepository,
+                                     ChatService chatService,
+                                     EmailService emailService,
+                                     ChatUserRepository chatUserRepository) {
         this.chatRepository = chatRepository;
         this.chatService = chatService;
         this.emailService = emailService;
+        this.chatUserRepository = chatUserRepository;
     }
-
-    /**
-     * Displays the list of chats.
-     * Handles database access exceptions and provides error messages.
-     *
-     * @param model Model to pass attributes to the view
-     * @return View name for rendering
-     */
 
     @GetMapping("/chats-management")
     public String showChatsManagement(Model model) {
@@ -79,14 +57,6 @@ public class ChatsManagementController {
         }
     }
 
-    /**
-     * Displays the add chat form.
-     * Initializes a new ChatForm with default values.
-     *
-     * @param model Model to pass attributes to the view
-     * @return View name for rendering
-     */
-
     @GetMapping("/new-chat")
     public String showChatForm(Model model) {
         if (!model.containsAttribute("chat")) {
@@ -94,15 +64,6 @@ public class ChatsManagementController {
         }
         return "new-chat";
     }
-
-    /**
-     * Handles the form submission when the "Generate" button is clicked.
-     * Generates a random chat link and adds it to the form.
-     *
-     * @param form ChatForm containing current user input
-     * @param redirectAttributes RedirectAttributes to persist the form across redirect
-     * @return Redirects back to the new chat form view with updated form data
-     */
 
     @PostMapping(value = "/new-chat", params = "generate")
     public String generateLink(@ModelAttribute("chat") ChatForm form, RedirectAttributes redirectAttributes) {
@@ -118,7 +79,6 @@ public class ChatsManagementController {
             logger.warn("::Validation errors: {}", result.getAllErrors());
             return "new-chat";
         }
-
         chatService.addInviteEmail(form, null);
         logger.info("::Adding invite emails: {}", form.getInviteEmails());
         chatService.saveChat(form);
@@ -136,20 +96,11 @@ public class ChatsManagementController {
             logger.warn("::Validation error: {}", result.getAllErrors());
             return "new-chat";
         }
-
         chatService.saveChat(form);
         emailService.sendInviteEmail(emailRequest, form);
         logger.info("::New chat saved and invite email sent to: {}", emailRequest.getTo());
         return "redirect:/ui/chats-management";
     }
-
-    /**
-     * Displays the chat edit form for a specific chat.
-     * Loads chat data into the form for editing.
-     *
-     * @param model Model to pass attributes to the view
-     * @return View name for rendering
-     */
 
     @GetMapping("/chat-settings")
     public String showChatSettings(@RequestParam("id") Long chatId, Model model) {
@@ -164,6 +115,13 @@ public class ChatsManagementController {
             dto.setType(chat.getType());
             dto.setActive(chat.isActive());
 
+            List<ChatUser> chatUsers = chatUserRepository.findByChat_ChatId(chatId);
+            model.addAttribute("chatUsers", chatUsers);
+
+            ShareEmail shareEmail = new ShareEmail();
+            shareEmail.setChatId(chatId);
+            model.addAttribute("shareEmail", shareEmail);
+
             model.addAttribute("chatSettingsDto", dto);
             return "chat-settings";
         } catch (Exception ex) {
@@ -173,15 +131,6 @@ public class ChatsManagementController {
         }
     }
 
-    /**
-     * Handles the form submission for editing a chat.
-     * Validates input and updates the chat in the database.
-     *
-     * @param chatSettingsDto DTO containing user data
-     * @param result              BindingResult for validation errors
-     * @param model           Model to pass attributes to the view
-     * @return View name for rendering
-     */
 
     @PostMapping("/chat-settings/save")
     public String editChatSettings(@Valid @ModelAttribute("chatSettingsDto") ChatSettingsDto chatSettingsDto,
@@ -191,7 +140,6 @@ public class ChatsManagementController {
             logger.warn("::Validation errors in chat settings: {}", result.getAllErrors());
             return "chat-settings";
         }
-
         try {
             chatService.updateChatSettings(chatSettingsDto);
             logger.info("::Chat settings updated for Chat ID: {}", chatSettingsDto.getId());
@@ -202,27 +150,39 @@ public class ChatsManagementController {
             return "chat-settings";
         }
     }
-
-     /**
-     * Handles the deletion of a chat by its ID.
-     * On success, redirects to the chats management page.
-     * On failure, logs the error, sets an error message, and returns to the chat settings page.
-     *
-     * @param chatId The ID of the chat to delete (from request parameter)
-     * @param model  Model to pass attributes to the view
-     * @return Redirect or view name
-     */
-
-      @PostMapping("/chat-settings/delete")
-      public String deleteChat(@RequestParam("id") Long chatId, Model model) {
+    @PostMapping("/chat-settings/share")
+    public String shareChat(
+            @ModelAttribute("shareEmail") ShareEmail shareEmail,
+            RedirectAttributes redirectAttributes
+    ) {
         try {
-        chatService.deleteChatById(chatId);
-        logger.info("::Chat deleted with ID: {}", chatId);
-        return "redirect:/ui/chats-management";
-         } catch (Exception ex) {
-        logger.error("::Failed to delete chat with ID: {}", chatId, ex);
-        model.addAttribute("errorMessage", "A system error occurred while deleting the chat.");
-        return "chat-settings";
-      }
-   }
+            // Example: send invite to each email (split by comma)
+            String[] emails = shareEmail.getEmail().split(",");
+            for (String email : emails) {
+                emailService.sendInvite(
+                        email.trim(),
+                        "User", // You can use the current user's name if available
+                        "https://fs-dev.portnov.com/chat/" + shareEmail.getChatId(),
+                        24 // TTL hours
+                );
+            }
+            redirectAttributes.addFlashAttribute("notification", "Invites sent!");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("notification", "Failed to send invites: " + ex.getMessage());
+        }
+        // Redirect back to settings page
+        return "redirect:/ui/chat-settings?id=" + shareEmail.getChatId();
+    }
+    @PostMapping("/chat-settings/delete")
+    public String deleteChat(@RequestParam("id") Long chatId, Model model) {
+        try {
+            chatService.deleteChatById(chatId);
+            logger.info("::Chat deleted with ID: {}", chatId);
+            return "redirect:/ui/chats-management";
+        } catch (Exception ex) {
+            logger.error("::Failed to delete chat with ID: {}", chatId, ex);
+            model.addAttribute("errorMessage", "A system error occurred while deleting the chat.");
+            return "chat-settings";
+        }
+    }
 }

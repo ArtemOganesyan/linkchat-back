@@ -17,8 +17,8 @@ public class EmailController {
 
     @PostMapping("/api/sendEmailUrl")
     public void sendEmailUrl(@RequestParam String to,
-                          @RequestParam String subject,
-                          @RequestParam String text) {
+                             @RequestParam String subject,
+                             @RequestParam String text) {
         try {
             emailService.sendSimpleMessage(to, subject, text);
         } catch (Exception e) {
@@ -57,12 +57,14 @@ public class EmailController {
             e.printStackTrace();
         }
     }
+
     @PostMapping("/api/chatTitleUpdated")
     public void chatTitleUpdated(@RequestParam String to,
                                  @RequestParam String chatTitle,
-                                 @RequestParam String link) {
+                                 @RequestParam String link,
+                                 @RequestParam(defaultValue = "24") int ttlHours) {
         try {
-            emailService.sendChatTitleUpdatedEmail(to, chatTitle, link);
+            emailService.sendInvite(to, chatTitle, link, ttlHours);
         } catch (Exception e) {
             e.printStackTrace();
         }

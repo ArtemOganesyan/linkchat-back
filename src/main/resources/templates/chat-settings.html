@@ -4,13 +4,72 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/styles/new-chat.css}"/>
     <title>Chat Settings</title>
+    <style>
+        .notification {
+            margin-bottom: 1em;
+            padding: 0.7em 1em;
+            border-radius: 5px;
+            background: #e3fbe3;
+            color: #256029;
+            border: 1px solid #b6e2b6;
+            display: none;
+        }
+        .notification.error {
+            background: #fdeaea;
+            color: #a94442;
+            border: 1px solid #f5c6cb;
+        }
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 1em;
+        }
+        .modern-table th, .modern-table td {
+            padding: 0.8em 1em;
+            text-align: left;
+        }
+        .modern-table th {
+            background: #f7f7f7;
+            font-weight: 600;
+            border-bottom: 2px solid #eaeaea;
+        }
+        .modern-table tr:nth-child(even) {
+            background: #fafbfc;
+        }
+        .modern-table tr:hover {
+            background: #f0f7ff;
+        }
+        .status-active {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .status-inactive {
+            color: #b71c1c;
+            font-weight: bold;
+        }
+        .used-link {
+            color: #1976d2;
+            font-weight: bold;
+        }
+        .not-used-link {
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/styles/new-chat.css}"/>
 </head>
 <body>
 <main layout:fragment="content" class="main">
     <div class="main-container">
+        <div id="notification" class="notification" style="display:none;"></div>
         <h1>Chat Settings</h1>
+        <!-- Main Settings Form -->
         <form th:action="@{/ui/chat-settings/save}"
               th:object="${chatSettingsDto}" method="post">
             <input type="hidden" th:field="*{id}" />
@@ -34,19 +93,58 @@
                 <label>Active</label>
                 <input type="checkbox" th:field="*{active}">
             </div>
-        <div style="display: flex; gap: 10px; align-items: center;">
-            <form th:action="@{/ui/chat-settings/save}" th:object="${chatSettingsDto}" method="post" style="margin: 0;">
-                <input type="hidden" th:field="*{id}" />
+            <div style="display: flex; gap: 10px; align-items: center;">
                 <button type="submit" class="action-button primary">Save</button>
-            </form>
+                <form th:action="@{/ui/chat-settings/delete}" method="post" th:object="${chatSettingsDto}" style="margin: 0;">
+                    <input type="hidden" th:field="*{id}" />
+                    <button type="submit" class="action-button danger" onclick="return confirm('Are you sure you want to delete this chat?')">Delete</button>
+                </form>
+            </div>
+        </form>
 
-            <form th:action="@{/ui/chat-settings/delete}" method="post" th:object="${chatSettingsDto}" style="margin: 0;">
-                <input type="hidden" th:field="*{id}" />
-                <button type="submit" class="action-button danger" onclick="return confirm('Are you sure you want to delete this chat?')">Delete</button>
-            </form>
+        <!-- Users with Access Table -->
+        <div class="chat-users-section" style="margin-top:2em;">
+            <h2>
+                Users with Access
+                <span th:text="'(' + ${#lists.size(chatUsers)} + ')'"></span>
+            </h2>
+            <table class="modern-table">
+                <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Used Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(chatUsers)}">
+                    <td colspan="3" style="text-align:center;">None</td>
+                </tr>
+                <tr th:each="user : ${chatUsers}">
+                    <td th:text="${user.email}">email@example.com</td>
+                    <td>
+                        <span th:text="${user.active} ? 'Active' : 'Inactive'"
+                              th:classappend="${user.active} ? 'status-active' : 'status-inactive'"></span>
+                    </td>
+                    <td>
+                        <span th:text="${user.usedLink} ? 'Yes' : 'No'"
+                              th:classappend="${user.usedLink} ? 'used-link' : 'not-used-link'"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Inline invite form (no modal) -->
+        <div class="invite-section" style="margin-top:2em;">
+            <<form th:action="@{/ui/chat-settings/share}" th:object="${shareEmail}" method="post">
+            <label for="share-email-input" style="margin-right:8px;">Invite by Email(s):</label>
+            <input id="share-email-input" type="text" th:field="*{email}" required placeholder="user1@example.com, user2@example.com" style="width:300px;" />
+            <input type="hidden" th:field="*{chatId}" />
+            <button type="submit" class="action-button primary">Send Invite</button>
+        </form>
         </div>
     </div>
-    </form>
 </main>
 </body>
 </html>
