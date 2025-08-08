@@ -130,6 +130,9 @@ public class UserController {
             model.addAttribute("successMessage", "User updated successfully!");
             model.addAttribute("redirectAfter", "/ui/user");
             return "edit-user";
+        } catch (ResponseStatusException ex) {
+            model.addAttribute("errorMessage", "User not found");
+            return "edit-user";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error updating user: " + e.getMessage());
             return "edit-user";

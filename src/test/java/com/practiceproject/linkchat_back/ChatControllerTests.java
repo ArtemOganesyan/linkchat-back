@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class ChatSettingsApiControllerTest {
+public class ChatControllerTests {
 
     private ChatRepository chatRepository;
     private ChatSettingRepository chatSettingRepository;
