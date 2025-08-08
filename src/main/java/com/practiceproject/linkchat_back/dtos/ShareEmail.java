@@ -21,7 +21,7 @@ public class ShareEmail {
     public String getEmail() {
         return email;
     }
-
+//note
     public void setEmail(String email) {
         this.email = email;
     }
