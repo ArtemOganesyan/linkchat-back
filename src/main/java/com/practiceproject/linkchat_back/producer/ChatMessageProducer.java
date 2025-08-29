@@ -1,7 +1,6 @@
 package com.practiceproject.linkchat_back.producer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.practiceproject.linkchat_back.model.ChatMessage;
 import com.practiceproject.linkchat_back.producerPayloads.ChatMessagePayload;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import javax.net.ssl.SSLContext;
 import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class ChatMessageProducer {
@@ -23,7 +21,7 @@ public class ChatMessageProducer {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public void start(ChatMessage chatMessage) throws Exception {
+    public void send(ChatMessagePayload payload) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(HOST);
         factory.setPort(PORT);
@@ -35,15 +33,6 @@ public class ChatMessageProducer {
              Channel channel = connection.createChannel()) {
 
             channel.queueDeclare(MESSAGE_QUEUE, true, false, false, null);
-
-            ChatMessagePayload payload = new ChatMessagePayload(
-                    chatMessage.getChat().getChatId(),
-                    chatMessage.getSender(),
-                    chatMessage.getRecipient(),
-                    chatMessage.getMessageType().name(),
-                    chatMessage.getMessageText(),
-                    chatMessage.getTimestamp()
-            );
 
             String json = objectMapper.writeValueAsString(payload);
 

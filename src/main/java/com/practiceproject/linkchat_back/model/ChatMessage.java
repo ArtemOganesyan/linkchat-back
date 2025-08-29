@@ -10,6 +10,12 @@ public class ChatMessage {
     @Column(name = "message_id")
     private Long messageId;
 
+    @ManyToOne
+    @JoinColumn(name = "chat_id")
+    private Chat chatId;
+
+    private String sender;
+
     @Column(name = "message_text")
     private String messageText;
 
@@ -27,12 +33,7 @@ public class ChatMessage {
     private String imageContentType;
 
     private String timestamp;
-    private String sender;
     private String recipient;
-
-    @ManyToOne
-    @JoinColumn(name = "chat_id")
-    private Chat chat;
 
     public enum MessageType {
         TEXT, IMAGE
@@ -113,10 +114,10 @@ public class ChatMessage {
     }
 
     public Chat getChat() {
-        return chat;
+        return chatId;
     }
 
-    public void setChat(Chat chat) {
-        this.chat = chat;
+    public void setChat(Chat chatId) {
+        this.chatId = chatId;
     }
 }

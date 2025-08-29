@@ -28,14 +28,13 @@ public class ChatInfo {
                     ChatUserRepository chatUserRepository,
                     ChatMessageRepository messageRepository) {
             try {
-                Chat chat = chatRepository.findByLink(link).orElse(null);
-                if (chat != null) {
-                    long chatId = chat.getChatId();
-                    this.title = chat.getTitle();
-                    this.link = chat.getLink();
+                Chat chatId = chatRepository.findByLink(link).orElse(null);
+                if (chatId != null) {
+                    this.title = chatId.getTitle();
+                    this.link = chatId.getLink();
 
-                    if (chat.getUsers() != null && !chat.getUsers().isEmpty()) {
-                        this.users = Arrays.asList(chat.getUsers().split("\\s*,\\s*"));
+                    if (chatId.getUsers() != null && !chatId.getUsers().isEmpty()) {
+                        this.users = Arrays.asList(chatId.getUsers().split("\\s*,\\s*"));
                     } else {
                         this.users = new ArrayList<>();
                     }

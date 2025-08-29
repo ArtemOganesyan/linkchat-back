@@ -1,5 +1,7 @@
 package com.practiceproject.linkchat_back.producerPayloads;
 
+import com.practiceproject.linkchat_back.model.Chat;
+
 public class ChatMessagePayload {
     private Long chatId;
     private String sender;
@@ -59,11 +61,11 @@ public class ChatMessagePayload {
         this.messageText = messageText;
     }
 
-    public String getCreatedAt() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setCreatedAt(String timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 }
